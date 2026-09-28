@@ -1,0 +1,204 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="A friendly English, Urdu and Balochi vocabulary companion." />
+    <title>Darbarjah · Balochi Dictionary</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,600;9..144,700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css?v=16" />
+    <link rel="manifest" href="manifest.webmanifest" />
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="#top" aria-label="Darbarjah home">
+        <span class="brand-mark">D</span>
+        <span>Darbarjah<span class="brand-dot">.</span></span>
+      </a>
+      <nav aria-label="Primary navigation">
+        <a class="nav-link active" href="#dictionary">Dictionary</a>
+        <a class="nav-link" href="#about">About</a>
+      </nav>
+      <button class="icon-button" id="themeToggle" type="button" aria-label="Toggle dark mode" title="Toggle dark mode">◐</button>
+    </header>
+
+    <main id="top">
+      <section class="hero" aria-labelledby="page-title">
+        <div class="hero-copy">
+          <p class="eyebrow"><span class="eyebrow-line"></span> A little language, a big welcome</p>
+          <h1 id="page-title">Find your words<br /><em>in Balochi.</em></h1>
+          <p class="hero-intro">A simple pocket dictionary for discovering Balochi through English and Urdu.</p>
+          <a class="text-link" href="#dictionary">Start exploring <span>↘</span></a>
+        </div>
+        <div class="hero-art" aria-hidden="true">
+          <div class="sun"></div>
+          <div class="mountain mountain-back"></div>
+          <div class="mountain mountain-front"></div>
+          <div class="hero-script">بلوچی</div>
+          <div class="art-note">words carry<br />home with them</div>
+        </div>
+      </section>
+
+      <section class="dictionary-section" id="dictionary" aria-labelledby="dictionary-title">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Your daily practice</p>
+            <h2 id="dictionary-title">The word shelf</h2>
+          </div>
+          <p class="entry-count"><strong id="visibleCount">0</strong> <span id="wordSource">Loading vocabulary…</span></p>
+        </div>
+
+        <div class="controls">
+          <label class="search-box">
+            <span class="search-icon">⌕</span>
+            <span class="sr-only">Search words</span>
+            <input id="searchInput" type="search" placeholder="Search in English, Urdu or Balochi..." autocomplete="off" />
+            <kbd>/</kbd>
+          </label>
+          <div class="filters" id="categoryFilters" role="group" aria-label="Filter by category"></div>
+        </div>
+        <div class="voice-session-launch">
+          <button class="outline-button" id="startVoiceSession" type="button" disabled>Record all words</button>
+          <span>Record your pronunciation for each word in sequence.</span>
+        </div>
+        <details class="add-entry-box">
+          <summary>Add a word or phrase</summary>
+          <div class="entry-transfer">
+            <button class="outline-button" id="exportEntriesCsv" type="button">Export entries CSV</button>
+            <button class="outline-button" id="exportBackup" type="button">Backup entries + voice</button>
+            <label class="outline-button import-backup-label">Import backup<input id="importBackup" type="file" accept="application/json,.json" /></label>
+            <p id="backupStatus" role="status"></p>
+          </div>
+          <form id="addEntryForm" class="entry-form">
+            <input name="entryId" type="hidden" />
+            <label>Entry type<select name="entryType"><option value="word">Word</option><option value="phrase">Phrase</option></select></label>
+            <label>English<input name="english" required placeholder="Meaning in English" /></label>
+            <label>Balochi Roman<input name="roman" required placeholder="Pronunciation in Roman letters" /></label>
+            <label>Balochi script<input name="balochi" required placeholder="بلوچی" /></label>
+            <label>Urdu<input name="urdu" required placeholder="اردو ترجمہ" /></label>
+            <label>Category<input name="category" placeholder="Greetings, Food…" /></label>
+            <label>Balochi example<input name="example" placeholder="Optional example sentence" /></label>
+            <label>English example<input name="exampleEnglish" placeholder="Optional translation" /></label>
+            <button class="solid-button" type="submit">Add to dictionary</button>
+            <p id="addEntryStatus" role="status"></p>
+          </form>
+        </details>
+
+        <div class="word-grid" id="wordGrid" aria-live="polite"></div>
+        <p class="empty-state" id="emptyState" hidden>No words found. Try a different spelling.</p>
+        <dialog class="word-dialog" id="wordDialog" aria-labelledby="dialogWord">
+          <button class="dialog-close" id="closeWordDialog" type="button" aria-label="Close word details">×</button>
+          <p class="panel-kicker">Word details</p>
+          <h2 id="dialogWord" lang="bal"></h2>
+          <p class="dialog-roman" id="dialogRoman"></p>
+          <div class="dialog-meanings">
+            <div><span>English</span><p id="dialogEnglish"></p></div>
+            <div><span>Urdu</span><p id="dialogUrdu" lang="ur"></p></div>
+          </div>
+          <div class="dialog-sentence"><span>Balochi sentence</span><p id="dialogBalochiSentence" lang="bal"></p></div>
+          <div class="dialog-sentence"><span>English sentence</span><p id="dialogEnglishSentence"></p></div>
+          <p class="dialog-category" id="dialogCategory"></p>
+          <button class="solid-button" id="dialogAudio" type="button">▶ Hear word</button>
+          <div class="personal-entry-actions" id="personalEntryActions" hidden>
+            <button class="outline-button" id="editEntry" type="button">Edit my entry</button>
+            <button class="outline-button" id="deleteEntry" type="button">Delete my entry</button>
+          </div>
+          <div class="pronunciation-practice">
+            <p class="panel-kicker">Pronunciation practice</p>
+            <button class="outline-button" id="checkPronunciation" type="button">Say this word</button>
+            <p id="pronunciationResult" role="status">Say the Roman pronunciation when you are ready.</p>
+            <p class="pronunciation-note">Approximate spelling match only. Browser speech recognition may not support Balochi pronunciation.</p>
+          </div>
+          <div class="voice-recorder">
+            <p id="voiceStatus" role="status">Record your pronunciation for this word.</p>
+            <div class="voice-actions">
+              <button class="outline-button" id="recordVoice" type="button">● Record my voice</button>
+              <button class="outline-button" id="stopVoice" type="button" disabled>■ Stop and save</button>
+              <button class="outline-button" id="deleteVoice" type="button" hidden>Delete recording</button>
+            </div>
+          </div>
+          <div class="phrase-recorder">
+            <p class="panel-kicker">Example sentence recording</p>
+            <p id="phraseVoiceStatus" role="status">Record the Balochi example sentence for practice.</p>
+            <div class="voice-actions">
+              <button class="outline-button" id="playPhraseVoice" type="button">▶ Play sentence</button>
+              <button class="outline-button" id="recordPhraseVoice" type="button">● Record sentence</button>
+              <button class="outline-button" id="stopPhraseVoice" type="button" disabled>■ Stop and save</button>
+              <button class="outline-button" id="deletePhraseVoice" type="button" hidden>Delete sentence recording</button>
+            </div>
+          </div>
+        </dialog>
+        <dialog class="word-dialog voice-session-dialog" id="voiceSessionDialog" aria-labelledby="voiceSessionWord">
+          <button class="dialog-close" id="closeVoiceSession" type="button" aria-label="Close recording session">×</button>
+          <p class="panel-kicker">Voice recording session</p>
+          <div id="voiceSessionCurrent">
+            <p class="session-progress" id="voiceSessionProgress"></p>
+            <progress id="voiceSessionMeter" max="1" value="0"></progress>
+            <h2 id="voiceSessionWord" lang="bal"></h2>
+            <p class="dialog-roman" id="voiceSessionRoman"></p>
+            <div class="dialog-meanings">
+              <div><span>English</span><p id="voiceSessionEnglish"></p></div>
+              <div><span>Urdu</span><p id="voiceSessionUrdu" lang="ur"></p></div>
+            </div>
+          </div>
+          <div id="voiceSessionComplete" hidden>
+            <h2>All words complete</h2>
+            <p>Your recordings are saved with their words in this browser.</p>
+          </div>
+          <p class="session-status" id="voiceSessionStatus" role="status">Allow microphone access to begin.</p>
+          <div class="voice-actions">
+            <button class="outline-button" id="voiceSessionHear" type="button">▶ Hear reference</button>
+            <button class="outline-button" id="voiceSessionRecord" type="button">● Record</button>
+            <button class="outline-button" id="voiceSessionStop" type="button" disabled>■ Stop and save</button>
+            <button class="outline-button" id="voiceSessionSkip" type="button">Skip word</button>
+            <button class="solid-button" id="voiceSessionNext" type="button">Next word</button>
+            <button class="solid-button" id="finishVoiceSession" type="button" hidden>Finish and close</button>
+          </div>
+        </dialog>
+      </section>
+
+      <section class="learning-tools" aria-labelledby="practice-title">
+        <div class="section-heading">
+          <div><p class="eyebrow">Keep going</p><h2 id="practice-title">Practice corner</h2></div>
+          <p class="progress-note" id="progressNote">Learn one word at a time</p>
+        </div>
+        <div class="practice-grid">
+          <article class="practice-panel daily-panel">
+            <p class="panel-kicker">Word of the day</p><div id="dailyWord"></div>
+          </article>
+          <article class="practice-panel flashcard-panel">
+            <p class="panel-kicker">Flashcards</p>
+            <div class="flashcard" id="flashcard" tabindex="0" role="button" aria-label="Reveal flashcard answer"><p class="flashcard-label">Balochi</p><strong id="flashcardWord">سلام</strong><p id="flashcardHint">Tap to reveal</p></div>
+            <button class="outline-button" id="nextCard" type="button">Next card</button>
+          </article>
+          <article class="practice-panel quiz-panel"><p class="panel-kicker">Quick quiz</p><div id="quizContent"></div></article>
+        </div>
+        <details class="suggestion-box"><summary>Suggest a word or correction</summary>
+          <form id="suggestionForm"><input name="balochi" placeholder="Balochi word" required /><input name="roman" placeholder="Roman pronunciation" required /><input name="meaning" placeholder="English meaning" required /><button class="solid-button" type="submit">Send suggestion</button><p id="suggestionStatus" role="status"></p></form>
+        </details>
+      </section>
+
+      <section class="phrase-band" id="about" aria-labelledby="phrase-title">
+        <div class="phrase-label"><span>01</span><span class="phrase-rule"></span><span>Try it out</span></div>
+        <div>
+          <p class="eyebrow">A phrase for today</p>
+          <h2 id="phrase-title">Salam, dost!</h2>
+          <p class="phrase-translation">Hello, friend!</p>
+        </div>
+        <button class="phrase-play" id="phrasePlay" type="button"><span>▶</span> Hear phrase</button>
+      </section>
+    </main>
+
+    <footer><span>Darbarjah · Balochi learning</span><span>Created by Mohsin Arman</span></footer>
+    <dialog class="welcome-dialog" id="welcomeDialog" aria-labelledby="welcomeTitle">
+      <p class="panel-kicker">Darbarjah says</p>
+      <h2 id="welcomeTitle" lang="bal">Wassh aatke!</h2>
+      <p class="welcome-script" lang="bal">وش آتکے۔</p>
+      <p class="welcome-meaning">Welcome · خوش آمدید</p>
+      <button class="solid-button" id="welcomeContinue" type="button">Start learning</button>
+    </dialog>
+    <script src="script.js?v=17"></script>
+  </body>
+</html>
